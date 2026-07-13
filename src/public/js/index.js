@@ -26,3 +26,24 @@ socket.on('updateProducts', (products) => {
         });
     }
 });
+
+// --- NUEVA FUNCIÓN PARA EL CARRITO ---
+async function addToCart(productId) {
+    try {
+        // Asegúrate de que esta URL sea la correcta según tus rutas de Express
+        const response = await fetch(`/api/carts/cartId/product/${productId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert("¡Perfume agregado al carrito con éxito!");
+        } else {
+            alert("Error al agregar: " + (data.message || "Algo salió mal"));
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+    }
+}

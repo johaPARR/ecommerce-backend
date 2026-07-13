@@ -1,27 +1,44 @@
-/* src/public/css/styles.css */
-
+/* --- Base y Estructura Global --- */
 body {
     background-color: #121212;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Contenedor centralizado (como en Chakra UI) */
-.product-container {
+/* Asegurar que el contenido principal tenga un ancho máximo y esté centrado */
+main, .product-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
+    width: 95%;
+    flex: 1;
 }
 
-h2 { text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
+/* --- Encabezado y Footer --- */
+header, footer {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+}
 
-/* Grid profesional para las tarjetas */
+h1, h2 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+header h1 { font-size: 2.5rem; color: #00d1ff; }
+
+/* --- Grid de Productos --- */
 .product-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
+    margin-top: 20px;
 }
 
 .product-card {
@@ -47,7 +64,7 @@ h2 { text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
     margin-bottom: 15px;
 }
 
-/* Estilos de botones (tipo Chakra) */
+/* --- Botones --- */
 .add-to-cart-btn, .detail-btn {
     padding: 10px 20px;
     border: none;
@@ -64,7 +81,7 @@ h2 { text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
 .detail-btn { background-color: #333; color: white; }
 .detail-btn:hover { background-color: #555; }
 
-/* Estilo de paginación */
+/* --- Paginación --- */
 .pagination {
     margin-top: 40px;
     text-align: center;
