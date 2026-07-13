@@ -1,8 +1,12 @@
 // public/js/index.js
+// public/js/index.js
 const socket = io();
 
+// RECUERDA: Reemplaza este ID por uno real de tu base de datos
+const cartId = "6690a7863a139a0012345678"; 
+
+// 1. Escucha de actualizaciones en tiempo real
 socket.on('updateProducts', (products) => {
-    // Usamos el ID correcto que definiste en el handlebars
     const productList = document.getElementById('products-container');
     
     if (productList) {
@@ -12,7 +16,6 @@ socket.on('updateProducts', (products) => {
             const div = document.createElement('div');
             div.className = 'product-card';
             
-            // Nota: Asegúrate de que el campo sea 'thumbnails' y no 'image'
             const img = product.thumbnails && product.thumbnails.length > 0 ? product.thumbnails[0] : '';
             
             div.innerHTML = `
@@ -21,17 +24,22 @@ socket.on('updateProducts', (products) => {
                 <p>${product.description}</p>
                 <p class="price">Precio: $${product.price}</p>
                 <p class="stock">Stock: ${product.stock}</p>
+                
+                <button class="add-to-cart-btn" onclick="addToCart('${product._id}')">Agregar al Carrito</button>
+                
+                <button class="buy-now-btn" onclick="buyNow('${product._id}')" style="margin-top: 10px; background-color: #ff9900; color: white; border: none; padding: 10px; cursor: pointer;">
+                    Comprar Ahora
+                </button>
             `;
             productList.appendChild(div);
         });
     }
 });
 
-// --- NUEVA FUNCIÓN PARA EL CARRITO ---
+// 2. FUNCIÓN: Agregar al Carrito (Básico)
 async function addToCart(productId) {
     try {
-        // Asegúrate de que esta URL sea la correcta según tus rutas de Express
-        const response = await fetch(`/api/carts/cartId/product/${productId}`, {
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -45,5 +53,35 @@ async function addToCart(productId) {
         }
     } catch (error) {
         console.error("Error al conectar con el servidor:", error);
+    }
+}
+
+// 3. FUNCIÓN: Comprar Ahora (Incluye método de pago)
+async function buyNow(productId) {
+    // Preguntar método de pago
+    const metodoPago = prompt("Selecciona método de pago:\nEscribe 'Efectivo' o 'Tarjeta'");
+    
+    if (!metodoPago || (metodoPago.toLowerCase() !== 'efectivo' && metodoPago.toLowerCase() !== 'tarjeta')) {
+        alert("Operación cancelada: Debes escribir 'Efectivo' o 'Tarjeta'");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ metodo: metodoPago })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert(`¡Compra realizada con éxito!\nMétodo seleccionado: ${metodoPago}`);
+        } else {
+            alert("Error al procesar la compra: " + (data.message || "Algo salió mal"));
+        }
+    } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+        alert("Error de conexión con el servidor.");
     }
 }
