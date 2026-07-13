@@ -14,6 +14,17 @@ router.post('/', async (req, res) => {
     }
 });
 
+// --- NUEVA RUTA PARA LISTAR TODOS LOS CARRITOS ---
+router.get('/', async (req, res) => {
+    try {
+        // Asumimos que tienes un método getCarts en tu CartManager
+        const carts = await cartManager.getCarts(); 
+        res.json({ status: "success", payload: carts });
+    } catch (error) {
+        res.status(500).json({ status: "error", message: "Error al obtener carritos" });
+    }
+});
+
 // GET /api/carts/:cid - Listar productos de un carrito específico
 router.get('/:cid', async (req, res) => {
     try {

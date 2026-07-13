@@ -32,10 +32,11 @@ h1, h2 {
 }
 
 header h1 { font-size: 4rem; color: #00d1ff; }
-header h2 { 
-    font-size: 3rem; /* Aumentado para que se note la diferencia */
-    color: #00d1ff; 
-    margin-top: 10px;
+header h2 {
+    font-size: 3.5rem; /* Tamaño mucho más grande */
+    color: #00d1ff;
+    text-align: center;
+    margin: 20px 0;
 }
 
 /* --- Grid de Productos --- */

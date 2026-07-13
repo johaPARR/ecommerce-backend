@@ -6,6 +6,11 @@ export default class CartManager {
         return await Cart.findById(cid).populate('products.product');
     }
 
+    // Obtener todos los carritos
+    async getCarts() {
+        return await Cart.find();
+    }
+
     // Crear un nuevo carrito vacío
     async createCart() {
         return await Cart.create({ products: [] });
