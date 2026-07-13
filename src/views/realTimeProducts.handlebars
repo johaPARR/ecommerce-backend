@@ -1,0 +1,24 @@
+<div class="product-container">
+    <h2>Productos en Tiempo Real</h2>
+
+    <div id="products-container" class="product-list">
+        {{#each products}}
+            <div class="product-card">
+                <img 
+                    src="{{this.thumbnails.[0]}}" 
+                    alt="{{this.title}}" 
+                    class="product-img"
+                >
+                <h3>{{this.title}}</h3>
+                <p>{{this.description}}</p>
+                <p class="price">Precio: ${{this.price}}</p>
+                <p class="stock">Stock: {{this.stock}}</p>
+            </div>
+        {{else}}
+            <p id="no-products">No hay productos disponibles.</p>
+        {{/each}}
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

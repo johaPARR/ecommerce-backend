@@ -1,0 +1,63 @@
+<div class="product-container">
+    <h2>Catálogo de Perfumes</h2>
+
+    <div class="product-list">
+        {{#each products}}
+            <div class="product-card">
+
+                <img src="{{this.thumbnails.[0]}}" alt="{{this.title}}" class="product-img">
+
+                <h3>{{this.title}}</h3>
+
+                <p>{{this.description}}</p>
+
+                <p class="price">
+                    Precio: ${{this.price}}
+                </p>
+
+                <p class="stock">
+                    Stock disponible: {{this.stock}}
+                </p>
+
+                <button class="add-to-cart-btn" onclick="addToCart('{{this._id}}')">
+                    Agregar al Carrito
+                </button>
+
+                <br><br>
+
+                <a href="/products/{{this._id}}">
+                    <button class="detail-btn">
+                        Ver Detalle
+                    </button>
+                </a>
+
+            </div>
+
+        {{else}}
+
+            <p>No se encontraron productos en este momento.</p>
+
+        {{/each}}
+    </div>
+
+    <div class="pagination">
+
+        {{#if hasPrevPage}}
+            <a href="/products?page={{prevPage}}">
+                Anterior
+            </a>
+        {{/if}}
+
+        <span>
+            Página {{page}} de {{totalPages}}
+        </span>
+
+        {{#if hasNextPage}}
+            <a href="/products?page={{nextPage}}">
+                Siguiente
+            </a>
+        {{/if}}
+
+    </div>
+
+</div>
