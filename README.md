@@ -236,3 +236,244 @@ Proyecto Final — Backend 1 · Carrera Fullstack Developer · Coderhouse
 ## 📝 Licencia
 
 Proyecto desarrollado con fines educativos para Coderhouse.
+
+ENGLISH VERSION////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# 🌸 Araperful — E-commerce Backend
+
+REST API and server-side views for a perfume e-commerce platform, built as the Final Project for **Backend 1** — Fullstack Developer Career, **Coderhouse**.
+
+It manages a product catalog and shopping carts with real database persistence, pagination, filtering, and real-time stock updates via WebSockets.
+
+---
+
+## 📋 Table of contents
+
+- [Technologies](#-technologies)
+- [Features](#-features)
+- [Project structure](#-project-structure)
+- [Installation](#-installation)
+- [Environment variables](#-environment-variables)
+- [Available scripts](#-available-scripts)
+- [API endpoints](#-api-endpoints)
+- [Views](#-views)
+- [Author](#-author)
+
+---
+
+## 🚀 Technologies
+
+| Category | Technology |
+|---|---|
+| Runtime | [Node.js](https://nodejs.org/) |
+| Web framework | [Express 5](https://expressjs.com/) |
+| Database | [MongoDB](https://www.mongodb.com/) |
+| ODM | [Mongoose](https://mongoosejs.com/) + [mongoose-paginate-v2](https://www.npmjs.com/package/mongoose-paginate-v2) |
+| Template engine | [Express-Handlebars](https://github.com/express-handlebars/express-handlebars) |
+| Real-time | [Socket.io](https://socket.io/) |
+| Environment variables | [dotenv](https://www.npmjs.com/package/dotenv) |
+| Development | [nodemon](https://nodemon.io/) |
+
+---
+
+## ✨ Features
+
+- **Full product CRUD**: create, list (with pagination, filtering and sorting), view detail, update and delete.
+- **Full cart CRUD**: create cart, add/remove products, update quantities, clear cart.
+- **Mongoose populate**: when querying a cart, the full product data is retrieved (not just its ID).
+- **Real-time updates**: the product view refreshes automatically via WebSockets whenever a new product is created, without reloading the page.
+- **Server-side views** with Handlebars: paginated catalog, product detail, and cart view.
+- **Dual persistence layer**: an active database implementation (MongoDB) plus a previous FileSystem implementation kept in `dao/fs/`.
+- **Modular architecture**: clear separation between routes, DAOs, models and views.
+
+---
+
+## 📁 Project structure
+
+```
+ecommerce-backend/
+├── src/
+│   ├── app.js                      # Entry point: Express server + Socket.io
+│   │
+│   ├── .config/
+│   │   └── dbConfig.js             # MongoDB connection
+│   │
+│   ├── routes/
+│   │   ├── products.router.js      # /api/products endpoints
+│   │   ├── carts.router.js         # /api/carts endpoints
+│   │   └── views.router.js         # Routes that render Handlebars views
+│   │
+│   ├── dao/
+│   │   ├── db/                     # Data access via MongoDB (active implementation)
+│   │   │   ├── ProductManager.db.js
+│   │   │   └── CartManager.db.js
+│   │   └── fs/                     # Previous FileSystem implementation (kept for reference)
+│   │       ├── ProductManager.js
+│   │       └── CartManager.js
+│   │
+│   ├── models/
+│   │   ├── products.model.js       # Mongoose schema for products
+│   │   └── carts.model.js          # Mongoose schema for carts
+│   │
+│   ├── data/                       # Local JSON files (FileSystem persistence)
+│   │   ├── products.json
+│   │   └── carts.json
+│   │
+│   ├── public/                     # Static assets
+│   │   ├── css/styles.css
+│   │   └── js/
+│   │       ├── index.js            # Socket.io client (real-time)
+│   │       └── products.js         # "Add to cart" logic
+│   │
+│   └── views/                      # Handlebars templates
+│       ├── layouts/main.handlebars
+│       ├── products.handlebars
+│       ├── productDetail.handlebars
+│       ├── cart.handlebars
+│       └── realTimeProducts.handlebars
+│
+├── scripts/
+│   └── seedProducts.js             # Script to seed the database
+│
+├── .env                            # Environment variables (not versioned)
+├── .gitignore
+├── package.json
+└── README.md
+```
+
+---
+
+## ⚙️ Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/johaPARR/ecommerce-backend.git
+cd ecommerce-backend
+```
+
+2. **Install dependencies**
+
+```bash
+npm install
+```
+
+3. **Set up environment variables**
+
+Create a `.env` file in the project root (see [Environment variables](#-environment-variables) below).
+
+4. **(Optional) Seed the database with sample products**
+
+```bash
+node scripts/seedProducts.js
+```
+
+5. **Start the server**
+
+```bash
+npm run dev
+```
+
+The server will be available at **http://localhost:8080**.
+
+---
+
+## 🔐 Environment variables
+
+Create a `.env` file in the project root with the following variables:
+
+```env
+PORT=8080
+MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/ecommerce?retryWrites=true&w=majority
+```
+
+> ⚠️ The `.env` file is listed in `.gitignore` and **is not pushed to the repository**. Never share your connection string with real credentials.
+
+---
+
+## 📜 Available scripts
+
+| Command | Description |
+|---|---|
+| `npm start` | Starts the server in production mode |
+| `npm run dev` | Starts the server in development mode with `nodemon` |
+| `node scripts/seedProducts.js` | Seeds the `products` collection with sample data |
+
+---
+
+## 🔌 API endpoints
+
+### Products — `/api/products`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/products` | Lists products with pagination, filtering (`query`) and sorting (`sort`) |
+| `GET` | `/api/products/:pid` | Retrieves a single product by ID |
+| `POST` | `/api/products` | Creates a new product |
+| `PUT` | `/api/products/:pid` | Updates an existing product |
+| `DELETE` | `/api/products/:pid` | Deletes a product |
+
+**Query params for `GET /api/products`:**
+
+| Parameter | Description | Default |
+|---|---|---|
+| `limit` | Number of results per page | `10` |
+| `page` | Page number | `1` |
+| `query` | Filter by `category:value` or `available` | — |
+| `sort` | Sort by price: `asc` \| `desc` | — |
+
+**Response shape for `GET /api/products`:**
+
+```json
+{
+  "status": "success",
+  "payload": [],
+  "totalPages": 0,
+  "prevPage": null,
+  "nextPage": null,
+  "page": 1,
+  "hasPrevPage": false,
+  "hasNextPage": false,
+  "prevLink": null,
+  "nextLink": null
+}
+```
+
+### Carts — `/api/carts`
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/carts` | Creates a new cart |
+| `GET` | `/api/carts/:cid` | Lists the cart's products (with `populate`) |
+| `POST` | `/api/carts/:cid/products/:pid` | Adds a product to the cart (increases quantity if it already exists) |
+| `PUT` | `/api/carts/:cid` | Updates all products in the cart |
+| `PUT` | `/api/carts/:cid/products/:pid` | Updates the quantity of a specific product |
+| `DELETE` | `/api/carts/:cid/products/:pid` | Removes a specific product from the cart |
+| `DELETE` | `/api/carts/:cid` | Clears the entire cart |
+
+---
+
+## 🖥️ Views
+
+| Route | Description |
+|---|---|
+| `/products` | Paginated product catalog |
+| `/products/:pid` | Product detail view |
+| `/carts/:cid` | Specific cart view |
+| `/realtimeproducts` | Catalog with real-time updates via WebSockets |
+
+---
+
+## 👩‍💻 Author
+
+**Johana Aylén Parrello**
+Final Project — Backend 1 · Fullstack Developer Career · Coderhouse
+
+- Portfolio: [johaparrello.wordpress.com](https://johaparrello.wordpress.com)
+- GitHub: [@johaPARR](https://github.com/johaPARR)
+
+---
+
+## 📝 License
+
+Project developed for educational purposes as part of the Coderhouse curriculum.
