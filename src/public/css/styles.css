@@ -31,7 +31,12 @@ h1, h2 {
     margin: 20px 0;
 }
 
-header h1 { font-size: 2.5rem; color: #00d1ff; }
+header h1 { font-size: 4rem; color: #00d1ff; }
+header h2 { 
+    font-size: 3rem; /* Aumentado para que se note la diferencia */
+    color: #00d1ff; 
+    margin-top: 10px;
+}
 
 /* --- Grid de Productos --- */
 .product-list {

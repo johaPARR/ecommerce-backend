@@ -1,87 +1,76 @@
 // public/js/index.js
-// public/js/index.js
 const socket = io();
 
-// RECUERDA: Reemplaza este ID por uno real de tu base de datos
-const cartId = "6690a7863a139a0012345678"; 
+// 1. Ya no usamos un ID fijo. Usaremos una variable global.
+let cartId = null;
 
-// 1. Escucha de actualizaciones en tiempo real
+// Función para obtener o crear el carrito al cargar la página
+async function initCart() {
+    try {
+        // Obtenemos los carritos (ajusta esta ruta si tu GET de carritos es diferente)
+        const response = await fetch('/api/carts');
+        const data = await response.json();
+        
+        if (data.payload && data.payload.length > 0) {
+            cartId = data.payload[0]._id; // Tomamos el primer carrito disponible
+        } else {
+            // Si no hay ninguno, creamos uno nuevo
+            const createRes = await fetch('/api/carts', { method: 'POST' });
+            const createData = await createRes.json();
+            cartId = createData.payload._id;
+        }
+        console.log("Carrito activo:", cartId);
+    } catch (error) {
+        console.error("Error inicializando carrito:", error);
+    }
+}
+
+// Llamamos a la inicialización al cargar
+initCart();
+
+// 2. Escucha de actualizaciones (Mantén lo que ya tenías)
 socket.on('updateProducts', (products) => {
     const productList = document.getElementById('products-container');
-    
     if (productList) {
         productList.innerHTML = ''; 
-        
         products.forEach(product => {
             const div = document.createElement('div');
             div.className = 'product-card';
-            
             const img = product.thumbnails && product.thumbnails.length > 0 ? product.thumbnails[0] : '';
-            
             div.innerHTML = `
                 <img src="${img}" alt="${product.title}" class="product-img">
                 <h3>${product.title}</h3>
                 <p>${product.description}</p>
                 <p class="price">Precio: $${product.price}</p>
-                <p class="stock">Stock: ${product.stock}</p>
-                
                 <button class="add-to-cart-btn" onclick="addToCart('${product._id}')">Agregar al Carrito</button>
-                
-                <button class="buy-now-btn" onclick="buyNow('${product._id}')" style="margin-top: 10px; background-color: #ff9900; color: white; border: none; padding: 10px; cursor: pointer;">
-                    Comprar Ahora
-                </button>
+                <button class="buy-now-btn" onclick="buyNow('${product._id}')" style="margin-top: 10px; background-color: #ff9900; color: white; border: none; padding: 10px; cursor: pointer;">Comprar Ahora</button>
             `;
             productList.appendChild(div);
         });
     }
 });
 
-// 2. FUNCIÓN: Agregar al Carrito (Básico)
+// 3. Funciones de compra usando el cartId dinámico
 async function addToCart(productId) {
-    try {
-        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            alert("¡Perfume agregado al carrito con éxito!");
-        } else {
-            alert("Error al agregar: " + (data.message || "Algo salió mal"));
-        }
-    } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-    }
+    if (!cartId) return alert("Esperando carrito...");
+    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await response.json();
+    response.ok ? alert("¡Agregado!") : alert("Error: " + data.message);
 }
 
-// 3. FUNCIÓN: Comprar Ahora (Incluye método de pago)
 async function buyNow(productId) {
-    // Preguntar método de pago
-    const metodoPago = prompt("Selecciona método de pago:\nEscribe 'Efectivo' o 'Tarjeta'");
+    if (!cartId) return alert("Esperando carrito...");
+    const metodoPago = prompt("Selecciona 'Efectivo' o 'Tarjeta'");
+    if (!metodoPago) return;
     
-    if (!metodoPago || (metodoPago.toLowerCase() !== 'efectivo' && metodoPago.toLowerCase() !== 'tarjeta')) {
-        alert("Operación cancelada: Debes escribir 'Efectivo' o 'Tarjeta'");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ metodo: metodoPago })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            alert(`¡Compra realizada con éxito!\nMétodo seleccionado: ${metodoPago}`);
-        } else {
-            alert("Error al procesar la compra: " + (data.message || "Algo salió mal"));
-        }
-    } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-        alert("Error de conexión con el servidor.");
-    }
+    const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metodo: metodoPago })
+    });
+    const data = await response.json();
+    response.ok ? alert(`Compra exitosa con ${metodoPago}`) : alert("Error: " + data.message);
 }
