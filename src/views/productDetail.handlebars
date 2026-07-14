@@ -1,50 +1,60 @@
 <div class="product-detail-container">
 
-    <h2>{{product.title}}</h2>
+    <div class="card shadow border-0 rounded-4 overflow-hidden">
 
-    <div class="product-card">
+        <div class="row g-0">
 
-        <img
-            src="{{product.thumbnails.[0]}}"
-            alt="{{product.title}}"
-            class="product-img"
-        >
+            <div class="col-md-6">
+                <img
+                    src="{{product.thumbnails.[0]}}"
+                    alt="{{product.title}}"
+                    class="img-fluid h-100 product-img"
+                    style="object-fit: cover; min-height: 400px; width: 100%;"
+                >
+            </div>
 
-        <p>
-            <strong>Descripción:</strong>
-            {{product.description}}
-        </p>
+            <div class="col-md-6">
 
-        <p>
-            <strong>Categoría:</strong>
-            {{product.category}}
-        </p>
+                <div class="card-body p-4 p-md-5 d-flex flex-column h-100">
 
-        <p>
-            <strong>Precio:</strong>
-            ${{product.price}}
-        </p>
+                    <span class="badge bg-secondary align-self-start mb-3">
+                        {{product.category}}
+                    </span>
 
-        <p>
-            <strong>Stock:</strong>
-            {{product.stock}}
-        </p>
+                    <h1 class="fw-bold mb-3">{{product.title}}</h1>
 
-        <button
-            class="add-to-cart-btn"
-            onclick="addToCart('{{product._id}}')"
-        >
-            Agregar al Carrito
-        </button>
+                    <p class="text-muted mb-4">{{product.description}}</p>
+
+                    <h2 class="text-success fw-bold mb-3">${{product.price}}</h2>
+
+                    <span class="badge bg-primary mb-4 align-self-start">
+                        Stock disponible: {{product.stock}}
+                    </span>
+
+                    <div class="mt-auto d-flex flex-column gap-2">
+
+                        <button
+                            class="btn btn-success btn-lg"
+                            onclick="addToCart('{{product._id}}')">
+
+                            <i class="bi bi-cart-plus"></i>
+                            Agregar al Carrito
+
+                        </button>
+
+                        <a href="/products" class="btn btn-outline-dark">
+                            <i class="bi bi-arrow-left"></i>
+                            Volver al Catálogo
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
-
-    <br>
-
-    <a href="/products">
-        <button>
-            ← Volver al Catálogo
-        </button>
-    </a>
 
 </div>
