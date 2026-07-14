@@ -2,17 +2,28 @@
 // Lógica global del carrito: se carga en TODAS las páginas (ver main.handlebars)
 const CART_STORAGE_KEY = 'araperful_cart_id';
 
+// Evita crear más de un carrito si el usuario hace varios clics rápido
+// (sin esto, 2 clicks casi simultáneos podían crear 2 carritos distintos).
+let cartCreationInFlight = null;
+
 // Obtiene el carrito guardado en localStorage, o crea uno nuevo si no existe
 async function getOrCreateCartId() {
-    let cartId = localStorage.getItem(CART_STORAGE_KEY);
-    if (cartId) return cartId;
+    const existingCartId = localStorage.getItem(CART_STORAGE_KEY);
+    if (existingCartId) return existingCartId;
 
-    const response = await fetch('/api/carts', { method: 'POST' });
-    const data = await response.json();
+    // Si ya hay una creación de carrito en curso, esperamos esa misma promesa
+    // en vez de disparar otro POST /api/carts en paralelo.
+    if (!cartCreationInFlight) {
+        cartCreationInFlight = (async () => {
+            const response = await fetch('/api/carts', { method: 'POST' });
+            const data = await response.json();
+            const newCartId = data.payload._id;
+            localStorage.setItem(CART_STORAGE_KEY, newCartId);
+            return newCartId;
+        })();
+    }
 
-    cartId = data.payload._id;
-    localStorage.setItem(CART_STORAGE_KEY, cartId);
-    return cartId;
+    return cartCreationInFlight;
 }
 
 // Muestra un toast de Bootstrap en la esquina superior derecha (reemplaza al alert())

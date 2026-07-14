@@ -1,15 +1,8 @@
 <div class="container">
 
     <div class="text-center mb-5">
-
-        <h1 class="display-3 fw-bold text-dark">
-            Catálogo de Perfumes
-        </h1>
-
-        <p class="lead text-secondary">
-            Descubrí nuestra colección de perfumes premium.
-        </p>
-
+        <h1 class="display-3 fw-bold text-dark">Catálogo de Perfumes</h1>
+        <p class="lead text-secondary">Descubrí nuestra colección de perfumes premium.</p>
     </div>
 
     <div class="row g-4">
@@ -20,48 +13,23 @@
 
             <div class="card h-100 shadow border-0 rounded-4">
 
-                <img
-                    src="{{this.thumbnails.[0]}}"
-                    class="card-img-top product-img"
-                    alt="{{this.title}}">
+                <a href="/products/{{this._id}}" style="cursor: pointer;">
+                    <img src="{{this.thumbnails.[0]}}" class="card-img-top product-img" alt="{{this.title}}" style="cursor: pointer;">
+                </a>
 
                 <div class="card-body d-flex flex-column">
 
-                    <h4 class="fw-bold">
-                        {{this.title}}
-                    </h4>
+                    <h4 class="fw-bold">{{this.title}}</h4>
 
-                    <p class="text-muted flex-grow-1">
-                        {{this.description}}
-                    </p>
+                    <p class="text-muted flex-grow-1">{{this.description}}</p>
 
-                    <h3 class="text-success fw-bold mb-3">
-                        ${{this.price}}
-                    </h3>
+                    <h3 class="text-success fw-bold mb-3">${{this.price}}</h3>
 
-                    <span class="badge bg-primary mb-3">
-                        Stock: {{this.stock}}
-                    </span>
+                    <span class="badge bg-primary mb-3">Stock: {{this.stock}}</span>
 
-                    <button
-                        class="btn btn-success w-100 mb-2"
-                        onclick="addToCart('{{this._id}}')">
+                    <button class="btn btn-success w-100 mb-2" onclick="addToCart('{{this._id}}')"><i class="bi bi-cart-plus"></i> Agregar al carrito</button>
 
-                        <i class="bi bi-cart-plus"></i>
-
-                        Agregar al carrito
-
-                    </button>
-
-                    
-                        href="/products/{{this._id}}"
-                        class="btn btn-outline-dark w-100">
-
-                        <i class="bi bi-eye"></i>
-
-                        Ver detalle
-
-                    </a>
+                    <a href="/products/{{this._id}}" class="btn btn-outline-dark w-100"><i class="bi bi-eye"></i> Ver detalle</a>
 
                 </div>
 
@@ -72,13 +40,7 @@
         {{else}}
 
         <div class="col-12">
-
-            <div class="alert alert-warning text-center">
-
-                No se encontraron productos.
-
-            </div>
-
+            <div class="alert alert-warning text-center">No se encontraron productos.</div>
         </div>
 
         {{/each}}
@@ -88,33 +50,13 @@
     <div class="d-flex justify-content-center align-items-center mt-5 gap-3">
 
         {{#if hasPrevPage}}
-
-        
-            href="/products?page={{prevPage}}"
-            class="btn btn-dark">
-
-            ← Anterior
-
-        </a>
-
+        <a href="/products?page={{prevPage}}" class="btn btn-dark">← Anterior</a>
         {{/if}}
 
-        <span class="fw-bold fs-5">
-
-            Página {{page}} de {{totalPages}}
-
-        </span>
+        <span class="fw-bold fs-5">Página {{page}} de {{totalPages}}</span>
 
         {{#if hasNextPage}}
-
-        
-            href="/products?page={{nextPage}}"
-            class="btn btn-dark">
-
-            Siguiente →
-
-        </a>
-
+        <a href="/products?page={{nextPage}}" class="btn btn-dark">Siguiente →</a>
         {{/if}}
 
     </div>
