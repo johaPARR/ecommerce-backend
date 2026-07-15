@@ -1,31 +1,93 @@
 
-//(((((((((((((((DEFINE COMO ES EL CARRITO QUE CONTIENE LOS PERFUMES))))))))))
+import Cart from '../../models/carts.model.js';
 
-import mongoose from "mongoose";
+export default class CartManager {
+    // Obtener carrito por ID con los productos "poblados"
+    // .lean() devuelve un objeto plano en vez de un Documento de Mongoose.
+    // Esto es CLAVE: Handlebars 4.7+ bloquea por seguridad el acceso a
+    // propiedades que no son "own properties" del objeto, y los campos de
+    // un Documento de Mongoose (products, title, etc.) son getters, no
+    // propiedades propias. Sin .lean(), la vista /carts/:cid recibía el
+    // carrito pero Handlebars no podía leer "cart.products" y lo trataba
+    // como vacío (por eso decía "carrito vacío" con productos ya cargados).
+    async getCartById(cid) {
+        return await Cart.findById(cid).populate('products.product').lean();
+    }
 
-const cartSchema = new mongoose.Schema(
-  {
-    products: [
-      {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "products",
-          required: true,
-        },
+    // Obtener todos los carritos
+    async getCarts() {
+        return await Cart.find();
+    }
 
-        quantity: {
-          type: Number,
-          default: 1,
-          min: 1,
-        },
-      },
-    ],
-  },
-  {
-    timestamps: true,
-  }
-);
+    // Crear un nuevo carrito vacío
+    async createCart() {
+        return await Cart.create({ products: [] });
+    }
 
-const Cart = mongoose.model("carts", cartSchema);
+    // Agregar producto al carrito (si ya existe, incrementa cantidad)
+    async addProductToCart(cid, pid) {
+        const cart = await Cart.findById(cid);
+        if (!cart) return null;
 
-export default Cart;
+        const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
+
+        if (productIndex !== -1) {
+            cart.products[productIndex].quantity += 1;
+        } else {
+            cart.products.push({ product: pid, quantity: 1 });
+        }
+
+        await cart.save();
+        return await this.getCartById(cid);
+    }
+
+    // Eliminar un producto puntual del carrito
+    async removeProductFromCart(cid, pid) {
+        const cart = await Cart.findById(cid);
+        if (!cart) return null;
+
+        cart.products = cart.products.filter(p => p.product.toString() !== pid);
+
+        await cart.save();
+        return await this.getCartById(cid);
+    }
+
+    // Actualizar todos los productos del carrito (reemplaza el array completo)
+    // products debe venir como [{ product: id, quantity: n }, ...]
+    async updateCart(cid, products) {
+        const cart = await Cart.findByIdAndUpdate(
+            cid,
+            { products },
+            { new: true, runValidators: true }
+        );
+
+        if (!cart) return null;
+        return await this.getCartById(cid);
+    }
+
+    // Actualizar únicamente la cantidad de un producto puntual
+    async updateProductQuantity(cid, pid, quantity) {
+        const cart = await Cart.findById(cid);
+        if (!cart) return null;
+
+        const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
+        if (productIndex === -1) return null;
+
+        cart.products[productIndex].quantity = quantity;
+
+        await cart.save();
+        return await this.getCartById(cid);
+    }
+
+    // Vaciar el carrito completo
+    async clearCart(cid) {
+        const cart = await Cart.findByIdAndUpdate(
+            cid,
+            { products: [] },
+            { new: true }
+        );
+
+        if (!cart) return null;
+        return cart;
+    }
+}
