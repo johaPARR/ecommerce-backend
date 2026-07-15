@@ -39,8 +39,12 @@ export default class ProductManager {
     }
 
     // Obtener producto por ID
+    // .lean() -> mismo motivo que en CartManager.db.js: sin esto, la vista
+    // productDetail.handlebars no podía leer product.title/thumbnails/_id
+    // porque Handlebars bloquea el acceso a props que no son "own" del
+    // objeto, y en un Documento de Mongoose no lo son.
     async getProductById(pid) {
-        return await Product.findById(pid);
+        return await Product.findById(pid).lean();
     }
 
     // Actualizar producto existente (nunca permite modificar el _id)

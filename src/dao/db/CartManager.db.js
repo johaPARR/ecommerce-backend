@@ -2,8 +2,15 @@ import Cart from '../../models/carts.model.js';
 
 export default class CartManager {
     // Obtener carrito por ID con los productos "poblados"
+    // .lean() devuelve un objeto plano en vez de un Documento de Mongoose.
+    // Esto es CLAVE: Handlebars 4.7+ bloquea por seguridad el acceso a
+    // propiedades que no son "own properties" del objeto, y los campos de
+    // un Documento de Mongoose (products, title, etc.) son getters, no
+    // propiedades propias. Sin .lean(), la vista /carts/:cid recibía el
+    // carrito pero Handlebars no podía leer "cart.products" y lo trataba
+    // como vacío (por eso decía "carrito vacío" con productos ya cargados).
     async getCartById(cid) {
-        return await Cart.findById(cid).populate('products.product');
+        return await Cart.findById(cid).populate('products.product').lean();
     }
 
     // Obtener todos los carritos
