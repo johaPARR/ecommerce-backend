@@ -8,6 +8,9 @@ import { connectDB } from './.config/dbConfig.js';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
 import viewsRouter from './routes/views.router.js';
+import ProductManager from './dao/db/ProductManager.db.js';
+
+const productManager = new ProductManager();
 
 dotenv.config();
 
@@ -48,11 +51,17 @@ const httpServer = app.listen(PORT, () => {
 const io = new Server(httpServer);
 
 // Configuración de eventos de WebSockets
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log('Nuevo cliente conectado por WebSockets');
 
-  // Ejemplo: Puedes emitir un evento a todos los clientes al conectarse
-  // socket.emit('updateProducts', datos);
+  // Al conectarse, se le manda al cliente la lista actual de productos,
+  // así la vista /realtimeproducts no arranca vacía.
+  try {
+    const result = await productManager.getProducts(100, 1);
+    socket.emit('updateProducts', result.docs);
+  } catch (error) {
+    console.error('Error al enviar productos iniciales por WebSocket:', error);
+  }
 });
 
 // Exportar io para usarlo en los routers si es necesario
