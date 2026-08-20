@@ -221,6 +221,31 @@ MONGO_URL=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/ecommerce?ret
 | `/carts/:cid` | Vista de un carrito específico |
 | `/realtimeproducts` | Catálogo con actualización en tiempo real vía WebSockets |
 
+
+## 🚀 Arquitectura de DevOps y Observabilidad
+
+Este repositorio documenta la implementación completa de prácticas modernas de DevOps, combinando containerización, aprovisionamiento automatizado de infraestructura y observabilidad en tiempo real.
+
+## 🛠️ Proyectos Incluidos
+
+1. **Aplicación Containerizada y Pipeline de CI/CD:**
+   - Containerización de una aplicación backend utilizando Docker y Docker Compose para asegurar consistencia entre entornos.
+   - Automatización de compilaciones, pruebas y flujos de trabajo mediante pipelines de integración continua con GitHub Actions.
+
+2. **Infraestructura como Código (IaC) con Terraform:**
+   - Aprovisionamiento automatizado de recursos en la nube en AWS (Capa Gratuita / Free Tier) mediante scripts de Terraform, logrando despliegues repetibles, escalables y controlados por versiones.
+
+3. **Pila de Monitoreo y Observabilidad:**
+   - Seguimiento de la salud de los servicios en tiempo real y recolección de métricas mediante Prometheus.
+   - Visualización de datos y control de disponibilidad (*uptime* con estado `up = 1`) a través de paneles interactivos personalizados en Grafana.
+
+## 🧰 Tecnologías Utilizadas
+- **Lenguajes y Frameworks:** Node.js, JavaScript
+- **Containerización:** Docker, Docker Compose
+- **Nube e Infraestructura como Código:** AWS, Terraform
+- **Integración Continua (CI/CD):** GitHub Actions
+- **Observabilidad y Monitoreo:** Prometheus, Grafana
+
 ---
 
 ## 👩‍💻 Autor
