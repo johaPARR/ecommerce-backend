@@ -462,6 +462,27 @@ MONGO_URL=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/ecommerce?retryW
 | `/carts/:cid` | Specific cart view |
 | `/realtimeproducts` | Catalog with real-time updates via WebSockets |
 
+# Full-Stack DevOps & Observability Portfolio
+
+This repository showcases an end-to-end implementation of modern DevOps practices, combining containerization, automated infrastructure provisioning, and real-time observability.
+
+## 🚀 Projects Included
+
+1. **Dockerized Application & CI/CD Pipeline:** 
+   - Containerized Node.js backend application using Docker and Docker Compose.
+   - Automated build and test workflows implemented with GitHub Actions.
+2. **Infrastructure as Code (IaC) with Terraform:**
+   - Automated resource provisioning on AWS (Free Tier) utilizing Terraform scripts for scalable and repeatable deployments.
+3. **Monitoring & Observability Stack:**
+   - Real-time service health tracking and metrics collection using **Prometheus** and custom dashboards in **Grafana**.
+
+## 🛠️ Tech Stack
+- **Languages & Frameworks:** Node.js, JavaScript
+- **Containerization:** Docker, Docker Compose
+- **Cloud & IaC:** AWS, Terraform
+- **CI/CD:** GitHub Actions
+- **Observability:** Prometheus, Grafana
+
 ---
 
 ## 👩‍💻 Author
